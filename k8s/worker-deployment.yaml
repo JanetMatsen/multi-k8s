@@ -8,7 +8,7 @@ spec:
     matchLabels:
       component: worker
   template:
-    metadta:
+    metadata:
       labels:
         component: worker
     spec:
