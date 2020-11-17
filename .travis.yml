@@ -1,0 +1,36 @@
+sudo: required
+language: generic
+
+services:
+  - docker
+
+before_install:
+  - docker build -t jmatsen/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true jmatsen/react-test npm test
+
+after_success:
+  - docker build -t jmatsen/multi-client ./client
+  - docker build -t jmatsen/multi-nginx ./nginx
+  - docker build -t jmatsen/multi-server ./server
+  - docker build -t jmatsen/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push jmatsen/multi-client
+  - docker push jmatsen/multi-nginx
+  - docker push jmatsen/multi-server
+  - docker push jmatsen/multi-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: 'us-west-2'
+  app: 'multi-docker'
+  env: 'MultiDocker-env'
+  bucket_name: 'elasticbeanstalk-us-west-2-339276244151'
+  bucket_path: 'docker-multi'
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
