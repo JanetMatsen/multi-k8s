@@ -26,6 +26,7 @@ before_install:
 
 script:
   - docker run -e CI=true jmatsen/react-test npm test -- --coverage
+  - echo "next: run deploy script"
 
 deploy:
   provider: script
