@@ -23,14 +23,14 @@ after_success:
   - docker push jmatsen/multi-server
   - docker push jmatsen/multi-worker
 
-deploy:
-  provider: elasticbeanstalk
-  region: 'us-west-2'
-  app: 'multi-docker'
-  env: 'MultiDocker-env'
-  bucket_name: 'elasticbeanstalk-us-west-2-339276244151'
-  bucket_path: 'docker-multi'
-  on:
-    branch: master
-  access_key_id: $AWS_ACCESS_KEY
-  secret_access_key: $AWS_SECRET_KEY
+# deploy:
+#   provider: elasticbeanstalk
+#   region: 'us-west-2'
+#   app: 'multi-docker'
+#   env: 'MultiDocker-env'
+#   bucket_name: 'elasticbeanstalk-us-west-2-339276244151'
+#   bucket_path: 'docker-multi'
+#   on:
+#     branch: master
+#   access_key_id: $AWS_ACCESS_KEY
+#   secret_access_key: $AWS_SECRET_KEY
