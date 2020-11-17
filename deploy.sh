@@ -1,4 +1,5 @@
 echo "run deploy.sh"
+echo $SHA
 
 docker build -t jmatsen/multi-client:latest -t jmatsen/multi-client:$SHA -f ./client/Dockerfile ./client
 docker build -t jmatsen/multi-server:latest -t jmatsen-multi-server:$SHA -f ./server/Dockerfile ./server
