@@ -9,7 +9,10 @@ env:
     - CLOUDSDK_CORE_DISABLE_PROMPTS=1
 
 before_install:
-  - openssl aes-256-cbc -K $encrypted_9f3b5599b056_key -iv $encrypted_9f3b5599b056_iv -in service-account.json.enc -out service-account.json -d
+  # docker run -it -v $(pwd):/app ruby:2.4 sh
+  # gem install travis
+  # - openssl aes-256-cbc -K $encrypted_9f3b5599b056_key -iv $encrypted_9f3b5599b056_iv -in service-account.json.enc -out service-account.json -d
+  - openssl aes-256-cbc -K $encrypted_2836b6d38344_key -iv $encrypted_2836b6d38344_iv -in multi-k8s-295917-2e0c877a47bc.json.com.enc -out multi-k8s-295917-2e0c877a47bc.json -d
   - curl https://sdk.cloud.google.com | bash > /dev/null;
   - source $HOME/google-cloud-sdk/path.bash.inc
   - gcloud components update kubectl
