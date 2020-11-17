@@ -5,23 +5,39 @@ services:
   - docker
 
 before_install:
+  - curl https://sdk.cloud.google.com | bash > /dev/null;
+  - source $HOME/google-cloud-sdk/path.bash.inc
+  - gcloud components update kubectl
+  - gcloud auth activate-service-account --key-file service-account.json
+  - openssl aes-256-cbc -K $encrypted_9f3b5599b056_key -iv $encrypted_9f3b5599b056_iv -in service-account.json.enc -out service-account.json -d
+  - gcloud config set project multi-k8s-295917
+  - gcloud config set compute/zone us-central1-c
+  - gcloud container clusters get-credentials multi-cluster
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker build -t jmatsen/react-test -f ./client/Dockerfile.dev ./client
 
 script:
-  - docker run -e CI=true jmatsen/react-test npm test
+  - docker run -e CI=true jmatsen/react-test npm test -- --coverage
 
-after_success:
-  - docker build -t jmatsen/multi-client ./client
-  - docker build -t jmatsen/multi-nginx ./nginx
-  - docker build -t jmatsen/multi-server ./server
-  - docker build -t jmatsen/multi-worker ./worker
-  # Log in to the docker CLI
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
-  # Take those images and push them to docker hub
-  - docker push jmatsen/multi-client
-  - docker push jmatsen/multi-nginx
-  - docker push jmatsen/multi-server
-  - docker push jmatsen/multi-worker
+deploy:
+  provider: script
+  script: bash ./deploy.sh
+  on:
+    branch: master
+
+
+#after_success:
+#  - docker build -t jmatsen/multi-client ./client
+#  - docker build -t jmatsen/multi-nginx ./nginx
+#  - docker build -t jmatsen/multi-server ./server
+#  - docker build -t jmatsen/multi-worker ./worker
+#  # Log in to the docker CLI
+#  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+#  # Take those images and push them to docker hub
+#  - docker push jmatsen/multi-client
+#  - docker push jmatsen/multi-nginx
+#  - docker push jmatsen/multi-server
+#  - docker push jmatsen/multi-worker
 
 # deploy:
 #   provider: elasticbeanstalk
